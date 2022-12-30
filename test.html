@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <title>Dynamic Tables in HTML</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css">
+    </head>
+  
+    <body>
+        <div class="container"><br>
+            <h3>
+                Budget for Each Family Member
+            </h3>
+            <br>
+            <table>
+                <thead><tr><td><b>Username</b></td></tr></thead>
+                <tr id="root"></tr>
+            </table>
+        </div>
+        <br>
+        <script>
+            var family_members = [
+                {"username": "John", "password": "password1", "balance":7500.66, "debt":0.0},
+                {"username": "Jane", "password": "password2", "balance":3999.66, "debt":0.0},
+                {"username": "Michael", "password": "password3", "balance":333.11, "debt":50.00}, 
+                {"username": "Marie", "password": "password4", "balance":115.00, "debt":0.0},
+                {"username": "Liam", "password": "password5", "balance":99.00, "debt":75.0},
+            ];
+            var root = document.getElementById('root');
+            data.forEach(element => root.insertAdjacentHTML('beforebegin', `<tr><td>${element.username}</td></tr>`));
+        </script>
+    </body>
+</html>
