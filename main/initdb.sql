@@ -1,4 +1,3 @@
-CREATE DATABASE IF NOT EXISTS create_user_table;
 CREATE DATABASE mysql_family_table;
 USE mysql_family_table;
 
@@ -8,7 +7,6 @@ CREATE TABLE family_members (
   balance float NOT NULL DEFAULT '0', 
   debt float NOT NULL DEFAULT '0',
   PRIMARY KEY (username)
-  )
-  ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  )   ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-create_family_members_table
+
