@@ -30,7 +30,7 @@
 
 # flask, mongo, bcrypt
 # revisit
-from flask import Flask, jsonify, request
+from flask import Flask, render_template, url_for, jsonify, request
 from flask_restful import Api, Resource
 from pymongo import MongoClient
 import bcrypt
@@ -42,6 +42,9 @@ api = Api(app)
 client = MongoClient("mongodb://db:27017")
 db = client.MoneyManagementDB
 users = db["Users"]
+########################################################################
+
+
 ########################################################################
 
 # note to self: register account
