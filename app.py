@@ -244,3 +244,46 @@ class Balance(Resource):
         })[0]
         return jsonify(retJson)
 
+# takeloan -> post
+# username, password, borrowing x amount, verify
+class TakeLoan(Resource):
+    def post(self):
+        postedData = request.get_json()
+        username = postedData["Username"]
+        password = postedData["Password"]
+        money    = postedData["Amount"]
+        retJson, error = verifyCred(username, password)
+# error
+        if error:
+            return jsonify(retJson)
+# update accounts following transaction        
+        cash = balanceUser(username)
+        debt = debtUser(username)
+        updateAccount(username, cash+money)
+        updateDebt(username, debt + money)
+# display message following transaction
+        return jsonify(genReturnDict(200, "Borrowed Funds Added to Account"))
+
+# payloan -> post
+# username, password, amount of payment, verify
+class PayLoan(Resource):
+    def post(self):
+        postedData = request.get_json()
+        username = postedData["Username"]
+        password = postedData["Password"]
+        money    = postedData["Payment Amount"]
+        retJson, error = verifyCred(username, password)
+# error
+# if balance insufficient
+        if error:
+            return jsonify(retJson)
+        cash = balanceUser(username)
+        if cash < money:
+            return jsonify(genReturnDict(303, "Insufficient Funds"))
+# update each account following payment
+        debt = debtUser(username)
+        updateAccount(username, cash-money)
+        updateDebt(username, debt - money)
+# display message following successful payment
+        return jsonify(genReturnDict(200, "Payment on Loan Successful"))
+
