@@ -131,7 +131,7 @@ def verifyCred(username, password):
         return genReturnDict(301, "Invalid Username"), True
     correct_pw = verifyPw(username, password)
     if not correct_pw:
-        return genReturnDicty(302, "Incorrect Password"), True
+        return genReturnDict(302, "Incorrect Password"), True
     return None, False
 
 ########################################################################
@@ -187,6 +187,44 @@ class Add(Resource):
         updateAccount("Household", family_cash+1)
         updateAccount(username, cash+money)
         return jsonify(genReturnDict(200, "Added to Account"))
+
+# transfer -> post to server
+# username, pwd, transfer to, transfer amount, verify
+class Transfer(Resource):
+    def post(self):
+        postedData = request.get_json()
+        username = postedData["Username"]
+        password = postedData["Password"]
+        to       = postedData["Transfer to"]
+        money    = postedData["Amount to Transfer"]
+        retJson, error = verifyCred(username, password)
+# error
+# if balance available less than zero
+# if transfer amount input less than zero
+# if transfer to user who doesn't exist
+        if error:
+            return jsonify(retJson)
+        cash = balanceUser(username)
+        if cash <= 0:
+            return jsonify(genReturnDict(303, "Transfer Failed: Insufficient Funds"))
+        if money<=0:
+            return jsonify(genReturnDict(304, "Please enter an amount greater than 0.00"))
+        if not UserExist(to):
+            return jsonify(genReturnDict(301, "This user does not exist"))
+# update all accounts following transfer
+# household, user sending money, user receiving money
+        cash_from = balanceUser(username)
+        cash_to   = balanceUser(to)
+        family_cash = balanceUser("Household")
+        updateAccount("Household", family_cash+1)
+        updateAccount(to, cash_to+money-1)
+        updateAccount(username, cash_from - money)
+# display message following successful transfer        
+        retJson = {
+            "Status":200,
+            "Message": "Transfer Successful"
+        }
+        return jsonify(genReturnDict(200, "Transfer Successful"))
 
 # balance -> post to server
 # note to self: return to this one later, check notes
