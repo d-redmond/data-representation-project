@@ -287,3 +287,17 @@ class PayLoan(Resource):
 # display message following successful payment
         return jsonify(genReturnDict(200, "Payment on Loan Successful"))
 
+########################################################################
+
+# housekeeping
+api.add_resource(Register, '/register')
+api.add_resource(Add, '/add')
+api.add_resource(Transfer, '/transfer')
+api.add_resource(Balance, '/balance')
+api.add_resource(TakeLoan, '/takeloan')
+api.add_resource(PayLoan, '/payloan')
+
+# host vm
+# note to self: double-check ip later
+if __name__=="__main__":
+    app.run(host='0.0.0.0')
