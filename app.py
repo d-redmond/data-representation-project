@@ -96,3 +96,68 @@ def verifyPw(username, password):
         return False
 
 ########################################################################
+
+# define current balance
+def balanceUser(username):
+    cash = users.find({
+        "Username":username
+    })[0]["Current Balance"]
+    return cash
+
+# define money owed
+def debtUser(username):
+    debt = users.find({
+        "Username":username
+    })[0]["Amount Currently Owed"]
+    return debt
+
+########################################################################
+
+# return resulting status/msg as json, display
+def genReturnDict(status, msg):
+    retJson = {
+        "Status": status,
+        "Message": msg
+    }
+    return retJson
+
+########################################################################
+
+# verify username and password
+# if true invalid username
+# if false wrong pwd
+def verifyCred(username, password):
+    if not UserExist(username):
+        return genReturnDict(301, "Invalid Username"), True
+    correct_pw = verifyPw(username, password)
+    if not correct_pw:
+        return genReturnDicty(302, "Incorrect Password"), True
+    return None, False
+
+########################################################################
+
+# update user account balance
+# use later for transfers in/out
+def updateAccount(username, balance):
+    users.update({
+        "Username": username
+    },{
+        "$set":{
+            "Current Balance": balance
+        }
+    })
+
+########################################################################
+
+# update user account money owed
+# use later for payments on loans etc. 
+def updateDebt(username, balance):
+    users.update({
+        "Username": username
+    },{
+        "$set":{
+            "Money Currently Owed": balance
+        }
+    })
+
+########################################################################
