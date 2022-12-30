@@ -161,3 +161,48 @@ def updateDebt(username, balance):
     })
 
 ########################################################################
+
+# classes
+# add, transfer, balance, takeloan, payloan
+
+# add -> post to server
+# input username/pwd/amount, verify input
+class Add(Resource):
+    def post(self):
+        postedData = request.get_json()
+        username = postedData["Username"]
+        password = postedData["Password"]
+        money = postedData["Amount to be Added"]
+        retJson, error = verifyCred(username, password)
+# error if money less than zero
+        if error:
+            return jsonify(retJson)
+        if money<=0:
+            return jsonify(genReturnDict(304, "Please enter an amount greater than 0.00"))
+# update user balance after add
+# update family balance after add        
+        cash = balanceUser(username)
+        money-= 1
+        family_cash = balanceUser("Household")
+        updateAccount("Household", family_cash+1)
+        updateAccount(username, cash+money)
+        return jsonify(genReturnDict(200, "Added to Account"))
+
+# balance -> post to server
+# note to self: return to this one later, check notes
+class Balance(Resource):
+    def post(self):
+        postedData = request.get_json()
+        username = postedData["Username"]
+        password = postedData["Password"]
+        retJson, error = verifyCred(username, password)
+        if error:
+            return jsonify(retJson)
+        retJson = users.find({
+            "Username": username
+        },{
+            "Password": 0,
+            "_id":0
+        })[0]
+        return jsonify(retJson)
+
