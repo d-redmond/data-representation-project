@@ -19,7 +19,9 @@
 * [flask](https://flask.palletsprojects.com/en/1.1.x/)
 
 #### To run code locally:
-From a terminal, run __createDatabase.py__ and then __createTables.py__ to initialize a database. Install packages by running pip install -r requirements.txt. Set Flask app to flask_server and run it. Follow the flask URL.
+From a terminal, run createDatabase.py and then createTables.py to initialize a database. Install required packages by running pip install -r requirements.txt. 
+
+Set Flask app to flask_server Follow the flask URL.
 
 #### To run code remotely:
 * G00411246.pythonanywhere.com
