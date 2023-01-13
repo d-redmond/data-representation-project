@@ -1,35 +1,6 @@
-# DELETE LATER
-# note to self: household budgeting api
-# several accounts, family main account, family members as users
-# can add money to balance - add
-# can pay money out of balance - transfer
-# check balance - balance
-# can take loan from parents/family account - takeloan
-# debt vs cash, changes update both
-# register account
-# make payments on loan - payloan
-# verify if enough money in account before payment completes
-
-# parameters
-# login/reg - username, password
-# add - username, password, amount to be added
-# transfer - username, password, username of person receiving money, amount to be paid
-# balance - username, password
-# takeloan - username, password, amount of loan
-# payloan - username, password, amount to be deducted from loan due
-
-# method
-# get info from server
-# post info to server
-
-# status codes
-# 200 success
-# invalid user/pwd 301/302
-# 303 insufficient funds
-# 304 invalid monetary input (neg)
+# household budgeting api
 
 # flask, mongo, bcrypt
-# revisit
 from flask import Flask, render_template, url_for, jsonify, request
 from flask_restful import Api, Resource
 from pymongo import MongoClient
@@ -47,7 +18,6 @@ users = db["Users"]
 
 ########################################################################
 
-# note to self: register account
 # define UserExist: name of account, verify input
 def UserExist(username):
     if users.find({"Username":username}).count() == 0:
@@ -55,7 +25,6 @@ def UserExist(username):
     else:
         return True
 
-# class Register: post to server
 # input data(json), username, password
 class Register(Resource):
     def post(self):
@@ -85,7 +54,6 @@ class Register(Resource):
         return jsonify(retJson)
 ########################################################################
 
-# authroization
 # verify password, match to username
 def verifyPw(username, password):
     if not UserExist(username):
@@ -127,8 +95,6 @@ def genReturnDict(status, msg):
 ########################################################################
 
 # verify username and password
-# if true invalid username
-# if false wrong pwd
 def verifyCred(username, password):
     if not UserExist(username):
         return genReturnDict(301, "Invalid Username"), True
@@ -140,7 +106,6 @@ def verifyCred(username, password):
 ########################################################################
 
 # update user account balance
-# use later for transfers in/out
 def updateAccount(username, balance):
     users.update({
         "Username": username
@@ -152,8 +117,7 @@ def updateAccount(username, balance):
 
 ########################################################################
 
-# update user account money owed
-# use later for payments on loans etc. 
+# update user account money owed 
 def updateDebt(username, balance):
     users.update({
         "Username": username
@@ -168,7 +132,6 @@ def updateDebt(username, balance):
 # classes
 # add, transfer, balance, takeloan, payloan
 
-# add -> post to server
 # input username/pwd/amount, verify input
 class Add(Resource):
     def post(self):
@@ -191,7 +154,7 @@ class Add(Resource):
         updateAccount(username, cash+money)
         return jsonify(genReturnDict(200, "Added to Account"))
 
-# transfer -> post to server
+# transfer
 # username, pwd, transfer to, transfer amount, verify
 class Transfer(Resource):
     def post(self):
@@ -201,10 +164,6 @@ class Transfer(Resource):
         to       = postedData["Transfer to"]
         money    = postedData["Amount to Transfer"]
         retJson, error = verifyCred(username, password)
-# error
-# if balance available less than zero
-# if transfer amount input less than zero
-# if transfer to user who doesn't exist
         if error:
             return jsonify(retJson)
         cash = balanceUser(username)
@@ -230,7 +189,6 @@ class Transfer(Resource):
         return jsonify(genReturnDict(200, "Transfer Successful"))
 
 # balance -> post to server
-# note to self: return to this one later, check notes
 class Balance(Resource):
     def post(self):
         postedData = request.get_json()
@@ -247,8 +205,7 @@ class Balance(Resource):
         })[0]
         return jsonify(retJson)
 
-# takeloan -> post
-# username, password, borrowing x amount, verify
+# takeloan
 class TakeLoan(Resource):
     def post(self):
         postedData = request.get_json()
@@ -256,7 +213,6 @@ class TakeLoan(Resource):
         password = postedData["Password"]
         money    = postedData["Amount"]
         retJson, error = verifyCred(username, password)
-# error
         if error:
             return jsonify(retJson)
 # update accounts following transaction        
@@ -267,8 +223,7 @@ class TakeLoan(Resource):
 # display message following transaction
         return jsonify(genReturnDict(200, "Borrowed Funds Added to Account"))
 
-# payloan -> post
-# username, password, amount of payment, verify
+# payment on loan
 class PayLoan(Resource):
     def post(self):
         postedData = request.get_json()
@@ -276,7 +231,6 @@ class PayLoan(Resource):
         password = postedData["Password"]
         money    = postedData["Payment Amount"]
         retJson, error = verifyCred(username, password)
-# error
 # if balance insufficient
         if error:
             return jsonify(retJson)
